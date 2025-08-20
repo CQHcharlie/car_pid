@@ -162,15 +162,25 @@ void loop()
     rotation = ((targetyaw - yaw + 360 * 10) % 360 - 180);
     Serial.println(rotation);
     */
-    // 2.0
+    /* 2.0
     targetyaw = (targetyaw + pos_angle(rotation)) % 360;
     rotation = pos_angle(targetyaw - yaw) % 360 - 180;
+    */
     /* 不行，必須保留targetyaw
     // 3.0 rotation = pos_angle((targetyaw + pos_angle(rotation)) - yaw) % 360 - 180;
     //限制旋轉速度
     if (millis() % 100 = 0)
     rotation = pos_angle((targetyaw + pos_angle(rotation / 10)) - yaw) % 360 - 180;
     */
+    //4.0 函数暂时先放这里
+    int pos_angle(int angle)
+        return (angle % 360 + 360) % 360;
+    int angle_diff(int a, int b)
+        int d = normalize_angle(a - b); return d > 180 ? d - 360 : d;
+
+    // 更新目标角度和电机旋转值
+    targetyaw = pos_angle(targetyaw + rotation);
+    motar_rotation = angle_diff(targetyaw, pos_angle(yaw));
     
 
     // 計算麥克納姆輪速度

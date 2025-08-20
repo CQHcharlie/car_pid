@@ -1,7 +1,7 @@
 {
     "configuration": "cpu=atmega2560",
     "board": "arduino:avr:mega",
-    "programmer": "avrisp",
+    "programmer": "arduinoisp",
     "port": "COM3",
-    "sketch": "car\\car (3).ino"
+    "sketch": "car\\car.ino"
 }
