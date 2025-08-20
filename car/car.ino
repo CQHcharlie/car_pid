@@ -172,20 +172,24 @@ void loop()
     if (millis() % 100 = 0)
     rotation = pos_angle((targetyaw + pos_angle(rotation / 10)) - yaw) % 360 - 180;
     */
-    //4.0 函数暂时先放这里
-    int pos_angle(int angle)
+    //4.1 函数暂时先放这里
+    int pos_angle(int angle) {
         return (angle % 360 + 360) % 360;
-    int angle_diff(int a, int b)
-        int d = normalize_angle(a - b); return d > 180 ? d - 360 : d;
+    }
+
+    int angle_diff(int a, int b) {
+        int d = pos_angle(a - b); 
+        return d > 180 ? d - 360 : d;
+    }
 
     // 更新目标角度和电机旋转值
-    targetyaw = pos_angle(targetyaw + rotation);
-    motar_rotation = angle_diff(targetyaw, pos_angle(yaw));
+    targetyaw = pos_angle(targetyaw + rotation / 10);
+    int motar_rotation = angle_diff(targetyaw, yaw + 180);
     
 
     // 計算麥克納姆輪速度
     int wheels[4];
-    calculateMecanumWheels(x_speed, y_speed, rotation, wheels);
+    calculateMecanumWheels(x_speed, y_speed, motar_rotation, wheels);
 
     // 控制電機
     for (int i = 0; i < 4; i++)
