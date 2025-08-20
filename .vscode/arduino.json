@@ -3,5 +3,5 @@
     "board": "arduino:avr:mega",
     "programmer": "avrisp",
     "port": "COM3",
-    "sketch": "car (3).ino"
+    "sketch": "car\\car (3).ino"
 }
