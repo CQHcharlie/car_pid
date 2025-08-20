@@ -22,6 +22,11 @@ const int DEADZONE = 30;
 // JY901角度變量
 int yaw, targetyaw;
 
+// PID转向设置
+int maxTurnSpeed = 10; // 1~+oo, 一次打满杆旋转的角度
+int maxTurnRate = 50;  // 1~1000,一秒内最多旋转多少次
+int 
+
 // 電機控制函數
 void mo(int a, int b, int c)
 {
@@ -86,10 +91,10 @@ int mapJoystickToSpeed(int value, int min_val, int max_val, int center)
 void calculateMecanumWheels(int x, int y, int r, int *wheels)
 {
     // 計算四個輪子的速度
-    wheels[0] = y - x - r; // 前右
-    wheels[1] = y + x + r; // 前左
-    wheels[2] = y + x - r; // 後左
-    wheels[3] = y - x + r; // 後右
+    wheels[0] = y - x - r; // 前左轮
+    wheels[1] = y + x + r; // 前右轮
+    wheels[2] = y + x - r; // 後左轮
+    wheels[3] = y - x + r; // 後右轮
 
     // 限制速度在-100到100之間
     for (int i = 0; i < 4; i++)
@@ -126,12 +131,13 @@ void setup()
     yaw = -JY901.getYaw() + 180;
     targetyaw = -JY901.getYaw() + 180;
 }
-
+/*
 // 角度轉0-360
 int pos_angle(int angle)
 {
     return (angle >= 0) ? (angle % 360) : ((360 - angle) % 360);
 }
+*/
 
 void loop()
 {
@@ -151,7 +157,7 @@ void loop()
     
     // 搖桿映射改正
     x_speed = -x_speed;
-    rotation = -rotation;
+    rotation = (-rotation / 1.0) * 0.01 * maxTurnSpeed;// rotation 需已经降速过
 
     // 修改targetyaw變量
     /* 1.0
@@ -188,9 +194,11 @@ void loop()
     int motar_rotation = angle_diff(targetyaw, yaw + 180);
     */
     
-    // 硬要简化的话... (v4.2)
-    targetyaw = ((targetyaw + rotation / 10) % 360 + 360) % 360;
-    int motar_rotation = ((targetyaw - yaw - 180) % 360 + 360) % 360;
+    // 简化 (v5)
+	if (millis() % 20 == 0)  // 限制转向速度
+    	targetyaw = ((targetyaw + rotation) % 360 + 360) % 360;
+    int motar_rotation = (((targetyaw - yaw - 180)+ 360) % 360);
+	motar_rotation=(motar_rotation > 180) ? (-motar_rotation + 180) : (motar_rotation);
     
 
     // 計算麥克納姆輪速度
