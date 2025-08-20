@@ -172,6 +172,7 @@ void loop()
     if (millis() % 100 = 0)
     rotation = pos_angle((targetyaw + pos_angle(rotation / 10)) - yaw) % 360 - 180;
     */
+    /*
     //4.1 函数暂时先放这里
     int pos_angle(int angle) {
         return (angle % 360 + 360) % 360;
@@ -185,6 +186,11 @@ void loop()
     // 更新目标角度和电机旋转值
     targetyaw = pos_angle(targetyaw + rotation / 10);
     int motar_rotation = angle_diff(targetyaw, yaw + 180);
+    */
+    
+    // 硬要简化的话... (v4.2)
+    targetyaw = ((targetyaw + rotation / 10) % 360 + 360) % 360;
+    int motar_rotation = ((targetyaw - yaw - 180) % 360 + 360) % 360;
     
 
     // 計算麥克納姆輪速度
