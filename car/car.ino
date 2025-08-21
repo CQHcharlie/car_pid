@@ -1,10 +1,13 @@
 #include <JY901_dfs.h>
 #include <JY901.h>
 #include <string.h>
+// #include <LiquidCrystal_I2C.h> // Library for LCD
 
 // 電機控制引腳定義
 // int m[4][3] = {{12, 34, 35}, {8, 37, 36}, {9, 43, 42}, {5, 29, 39}};
 int m[4][3] = { {8, 37, 36}, {5, 39, 29},{12, 34, 35}, {9, 42, 43}};
+
+// LiquidCrystal_I2C lcd(0x27,20,4);
 
 // 搖桿引腳定義
 #define x1 A15
@@ -27,11 +30,11 @@ int maxTurnSpeed = 10; // 1~+oo, 一次打满杆旋转的角度 摇杆
 int maxTurnRate = 30;  // 1~1000,一秒内最多旋转多少次 摇杆
 float notLineCurvature = 1; //0~+oo,非线性PID修正(⚠️非摇杆)硬度，数字越大越硬
 
-// // 車移動速度限制：X Y R映射限制
-// int maxXspeed = 100;
-// int maxYspeed = 100;
-// int maxRotationspeed = 100;
-// int totalMaxspeed = 100;
+// 車移動速度限制：X Y R映射限制
+int maxXspeed = 100;
+int maxYspeed = 100;
+int maxRotationspeed = 100;
+int totalMaxspeed = 100;
 
 // 電機控制函數
 void mo(int a, int b, int c)
@@ -96,6 +99,10 @@ int mapJoystickToSpeed(int value, int min_val, int max_val, int center)
 // 麥克納姆輪運動計算函數
 void calculateMecanumWheels(int x, int y, int r, int *wheels)
 {
+    x = x  / (totalMaxspeed / 100.0) * maxXspeed / 100;
+    y = y  / (totalMaxspeed / 100.0) * maxYspeed / 100;
+    r = r  / (totalMaxspeed / 100.0) * maxRotationspeed / 100;
+
     // 計算四個輪子的速度
     wheels[0] = y - x - r; // 前左轮
     wheels[1] = y + x + r; // 前右轮
@@ -112,7 +119,11 @@ void calculateMecanumWheels(int x, int y, int r, int *wheels)
 void setup()
 {
     Serial.begin(115200);
-
+    // lcd.init();
+    // lcd.backlight();
+    // lcd.clear();
+    // lcd.setCursor(0,0);
+    // lcd.print("dercfe");
     // 初始化電機引腳
     for (int o = 0; o < 4; ++o)
     {
@@ -203,7 +214,8 @@ void loop()
     // 简化 (v6)
 	if (millis() % (1000 / maxTurnRate) == 0)  // 限制转向速度
     	targetyaw = ((targetyaw + rotation) % 360 + 360) % 360;
-    int motar_rotation = (targetyaw - yaw - 180);
+    int motar_rotation = (((targetyaw - yaw - 180)+ 360) % 360);
+	motar_rotation=(motar_rotation > 180) ? (motar_rotation - 360) : (motar_rotation);
     
 
     // 計算麥克納姆輪速度
