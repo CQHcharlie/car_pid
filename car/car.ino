@@ -25,7 +25,13 @@ int yaw, targetyaw;
 // PID转向设置
 int maxTurnSpeed = 10; // 1~+oo, 一次打满杆旋转的角度
 int maxTurnRate = 50;  // 1~1000,一秒内最多旋转多少次
-float notLineCurvature = 1 //0~+oo,非线性PID修正(⚠️非摇杆)硬度，数字越大越硬
+float notLineCurvature = 1; //0~+oo,非线性PID修正(⚠️非摇杆)硬度，数字越大越硬
+
+// // 車移動速度限制：X Y R映射限制
+// int maxXspeed = 100;
+// int maxYspeed = 100;
+// int maxRotationspeed = 100;
+// int totalMaxspeed = 100;
 
 // 電機控制函數
 void mo(int a, int b, int c)
