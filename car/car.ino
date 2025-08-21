@@ -205,7 +205,7 @@ void loop()
     	targetyaw = ((targetyaw + rotation) % 360 + 360) % 360;
     int motar_rotation = (((targetyaw - yaw - 180)+ 360) % 360);
     Serial.println(motar_rotation);
-	motar_rotation=(motar_rotation > 180) ? (-motar_rotation + 180) : (180 - motar_rotation);
+	motar_rotation=(motar_rotation > 180) ? (motar_rotation - 360) : (motar_rotation);
     
 
     // 計算麥克納姆輪速度
