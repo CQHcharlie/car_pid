@@ -23,8 +23,8 @@ const int DEADZONE = 30;
 int yaw, targetyaw;
 
 // PID转向设置
-int maxTurnSpeed = 10; // 1~+oo, 一次打满杆旋转的角度
-int maxTurnRate = 50;  // 1~1000,一秒内最多旋转多少次
+int maxTurnSpeed = 10; // 1~+oo, 一次打满杆旋转的角度 摇杆
+int maxTurnRate = 50;  // 1~1000,一秒内最多旋转多少次 摇杆
 float notLineCurvature = 1; //0~+oo,非线性PID修正(⚠️非摇杆)硬度，数字越大越硬
 
 // // 車移動速度限制：X Y R映射限制
@@ -204,7 +204,8 @@ void loop()
 	if (millis() % (1000 / maxTurnRate) == 0)  // 限制转向速度
     	targetyaw = ((targetyaw + rotation) % 360 + 360) % 360;
     int motar_rotation = (((targetyaw - yaw - 180)+ 360) % 360);
-	motar_rotation=(motar_rotation > 180) ? (-motar_rotation + 180) : (motar_rotation);
+    Serial.println(motar_rotation);
+	motar_rotation=(motar_rotation > 180) ? (-motar_rotation + 180) : (180 - motar_rotation);
     
 
     // 計算麥克納姆輪速度
