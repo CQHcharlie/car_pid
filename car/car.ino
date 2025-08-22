@@ -102,19 +102,21 @@ void calculateMecanumWheels(int x, int y, int r, int *wheels)
     x = x  / (totalMaxspeed / 100.0) * maxXspeed / 100;
     y = y  / (totalMaxspeed / 100.0) * maxYspeed / 100;
     r = r  / (totalMaxspeed / 100.0) * maxRotationspeed / 100;
-
+    
     // 計算四個輪子的速度
     wheels[0] = y - x - r; // 前左轮
     wheels[1] = y + x + r; // 前右轮
     wheels[2] = y + x - r; // 後左轮
     wheels[3] = y - x + r; // 後右轮
-
+    
     // 限制速度在-100到100之間
     for (int i = 0; i < 4; i++)
     {
         wheels[i] = constrain(wheels[i], -100, 100);
     }
 }
+
+int last_rotation = 0;
 
 void setup()
 {
@@ -133,10 +135,10 @@ void setup()
         }
     }
     Serial.println("開始執行");
-
+    
     // 搖桿校準
     jo_st();
-
+    
     Serial.println("搖桿校準完成");
     Serial.print("x1: "); Serial.print(x1a); Serial.print(" - "); Serial.print(x1_center); Serial.print(" - "); Serial.println(x1d);
     Serial.print("x2: "); Serial.print(x2a); Serial.print(" - "); Serial.print(x2_center); Serial.print(" - "); Serial.println(x2d);
@@ -153,7 +155,7 @@ void setup()
 int pos_angle(int angle)
 {
     return (angle >= 0) ? (angle % 360) : ((360 - angle) % 360);
-}
+    }
 */
 
 void loop()
@@ -175,6 +177,7 @@ void loop()
     // 搖桿映射改正
     x_speed = -x_speed;
     rotation = (-rotation / 1.0) * 0.01 * maxTurnSpeed;// rotation 需已经降速过
+
 
     // 修改targetyaw變量
     /* 1.0
@@ -211,17 +214,12 @@ void loop()
     int motar_rotation = angle_diff(targetyaw, yaw + 180);
     */
     
-    // // 简化 (v7)
-	// if (millis() % (1000 / maxTurnRate) == 0)  // 限制转向速度
-    // 	targetyaw = ((targetyaw + rotation) % 360 + 360) % 360;
-    // int motar_rotation = (((targetyaw - yaw - 180)+ 360) % 360);
-	// motar_rotation=(motar_rotation > 180) ? (motar_rotation - 360) : (motar_rotation);
-    
-    //v8
-    if (millis() % (1000 / maxTurnRate) == 0)  // 限制转向速度
+    // 简化 (v8)
+	if (millis() % (1000 / maxTurnRate) == 0)  // 限制转向速度
     	targetyaw = ((targetyaw + rotation) % 360 + 360) % 360;
-        int motar_rotation = (targetyaw - yaw - 180) < -180 ? (targetyaw - yaw - 180) + 360 : ((targetyaw - yaw - 180) > 180 ? (360 - (targetyaw - yaw - 180)) : (targetyaw - yaw - 180));
-    
+    int motar_rotation = (((targetyaw - yaw - 180)+ 360) % 360);
+	motar_rotation=(abs(last_rotation < 160)) ? ((motar_rotation > 180) ? (motar_rotation - 360) : (motar_rotation)) : ((motar_rotation > 180) ? (motar_rotation) : (360 - motar_rotation));
+    last_rotation = motar_rotation;
     
 
     // 計算麥克納姆輪速度
