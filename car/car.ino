@@ -176,7 +176,7 @@ void loop()
     
     // 搖桿映射改正
     x_speed = -x_speed;
-    rotation = (-rotation / 1.0) * 0.01 * maxTurnSpeed;// rotation 需已经降速过
+    rotation = (rotation / 1.0) * 0.01 * maxTurnSpeed;// rotation 需已经降速过
 
 
     // 修改targetyaw變量
@@ -218,8 +218,10 @@ void loop()
 	if (millis() % (1000 / maxTurnRate) == 0)  // 限制转向速度
     	targetyaw = ((targetyaw + rotation) % 360 + 360) % 360;
     int motar_rotation = (((targetyaw - yaw - 180)+ 360) % 360);
-	motar_rotation=(abs(last_rotation < 160)) ? ((motar_rotation > 180) ? (motar_rotation - 360) : (motar_rotation)) : ((motar_rotation > 180) ? (motar_rotation) : (360 - motar_rotation));
+    
+	motar_rotation=(abs(last_rotation) < 175 || abs(last_rotation) > 180) ? ((motar_rotation > 180) ? (motar_rotation - 360) : (motar_rotation)) : ((last_rotation > 0) ? (motar_rotation) : (motar_rotation - 360));
     last_rotation = motar_rotation;
+    Serial.println(motar_rotation);
     
 
     // 計算麥克納姆輪速度
