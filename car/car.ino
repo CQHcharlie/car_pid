@@ -20,7 +20,7 @@ int x1a = 500, x1d = 500, x2a = 500, x2d = 500, y1a = 500, y1d = 500, y2a = 500,
 int x1_center, x2_center, y1_center, y2_center;
 
 // 死區閾值
-const int DEADZONE = 30;
+const int DEADZONE = 10;
 
 // JY901角度變量
 int yaw, targetyaw;
@@ -169,7 +169,7 @@ void loop()
 
     // 映射搖桿值到速度值
     int x_speed = mapJoystickToSpeed(x1_val, x1a, x1d, x1_center);
-    int y_speed = mapJoystickToSpeed(y1_val, y1a, y1d, y1_center);
+    int y_speed = mapJoystickToSpeedy1_val, y1a, y1d, y1_center;
     int rotation = mapJoystickToSpeed(y2_val, y2a, y2d, y2_center);
     
     // 搖桿映射改正
@@ -211,11 +211,17 @@ void loop()
     int motar_rotation = angle_diff(targetyaw, yaw + 180);
     */
     
-    // 简化 (v6)
-	if (millis() % (1000 / maxTurnRate) == 0)  // 限制转向速度
+    // // 简化 (v7)
+	// if (millis() % (1000 / maxTurnRate) == 0)  // 限制转向速度
+    // 	targetyaw = ((targetyaw + rotation) % 360 + 360) % 360;
+    // int motar_rotation = (((targetyaw - yaw - 180)+ 360) % 360);
+	// motar_rotation=(motar_rotation > 180) ? (motar_rotation - 360) : (motar_rotation);
+    
+    //v8
+    if (millis() % (1000 / maxTurnRate) == 0)  // 限制转向速度
     	targetyaw = ((targetyaw + rotation) % 360 + 360) % 360;
-    int motar_rotation = (((targetyaw - yaw - 180)+ 360) % 360);
-	motar_rotation=(motar_rotation > 180) ? (motar_rotation - 360) : (motar_rotation);
+        int motar_rotation = (targetyaw - yaw - 180) < -180 ? (targetyaw - yaw - 180) + 360 : ((targetyaw - yaw - 180) > 180 ? (360 - (targetyaw - yaw - 180)) : (targetyaw - yaw - 180));
+    
     
 
     // 計算麥克納姆輪速度
