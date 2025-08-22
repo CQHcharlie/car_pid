@@ -215,13 +215,18 @@ void loop()
     */
     
     // 简化 (v8)
+        Serial.print(yaw);
+    Serial.print("  ");
 	if (millis() % (1000 / maxTurnRate) == 0)  // 限制转向速度
     	targetyaw = ((targetyaw + rotation) % 360 + 360) % 360;
-    int motar_rotation = (((targetyaw - yaw - 180)+ 360) % 360);
-    
-	motar_rotation=(abs(last_rotation) < 175 || abs(last_rotation) > 180) ? ((motar_rotation > 180) ? (motar_rotation - 360) : (motar_rotation)) : ((last_rotation > 0) ? (motar_rotation) : (motar_rotation - 360));
+    int motar_rotation = (((targetyaw - yaw)+ 360) % 360);
+    Serial.print(motar_rotation);
+    Serial.print("  ");
+	motar_rotation=(abs(last_rotation) < 165) ? ((motar_rotation > 180) ? (motar_rotation - 360) : (motar_rotation)) : ((last_rotation > 0) ? (motar_rotation) : (motar_rotation - 360));
+    Serial.print(motar_rotation);
+    Serial.print("  ");
+    Serial.println(last_rotation);
     last_rotation = motar_rotation;
-    Serial.println(motar_rotation);
     
 
     // 計算麥克納姆輪速度
