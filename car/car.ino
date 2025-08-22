@@ -169,7 +169,7 @@ void loop()
 
     // 映射搖桿值到速度值
     int x_speed = mapJoystickToSpeed(x1_val, x1a, x1d, x1_center);
-    int y_speed = mapJoystickToSpeedy1_val, y1a, y1d, y1_center;
+    int y_speed = mapJoystickToSpeed(y1_val, y1a, y1d, y1_center);
     int rotation = mapJoystickToSpeed(y2_val, y2a, y2d, y2_center);
     
     // 搖桿映射改正
